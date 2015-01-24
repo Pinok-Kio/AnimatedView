@@ -136,6 +136,7 @@ class PrepareUtils {
 
 	/**
 	 * Set how many squares should be in one line
+	 *
 	 * @param count squares count
 	 * @return reference to self
 	 */
@@ -146,6 +147,7 @@ class PrepareUtils {
 
 	/**
 	 * Set margins between squares
+	 *
 	 * @param margin margin between squares
 	 * @return reference to self
 	 */
@@ -156,6 +158,7 @@ class PrepareUtils {
 
 	/**
 	 * Set flip animation speed
+	 *
 	 * @param speed flip animation speed, see values in attrs
 	 * @return reference to self
 	 */
@@ -166,6 +169,7 @@ class PrepareUtils {
 
 	/**
 	 * Set max delay before rotate animation started
+	 *
 	 * @param delay max delay value
 	 * @return reference to self
 	 */
@@ -181,6 +185,7 @@ class PrepareUtils {
 
 	/**
 	 * Is rotate animation required?
+	 *
 	 * @param animateChanges true - use animation (default), false - no animation
 	 * @return reference to self
 	 */
@@ -191,6 +196,7 @@ class PrepareUtils {
 
 	/**
 	 * Prepare Squared (dividing bitmaps, set initial values). Take some time, should run outside main thread.
+	 *
 	 * @return collection of Squares to use
 	 * @throws IOException if the image format is not supported or can not be decoded.
 	 */
@@ -294,10 +300,7 @@ class PrepareUtils {
 	}
 
 	private static Bitmap scaleBitmap(Bitmap bitmap, int width) {
-		if (bitmap.getWidth() > width) {
-			return Bitmap.createScaledBitmap(bitmap, width, width, false);
-		}
-		return bitmap;
+		return Bitmap.createScaledBitmap(bitmap, width, width, false);
 	}
 
 	private static byte[] bitmapToByteArray(Bitmap bitmap) {
@@ -308,6 +311,7 @@ class PrepareUtils {
 
 	/**
 	 * Prepare Squared asynchronously(dividing bitmaps, set initial values).
+	 *
 	 * @return future with collection of Squares to use
 	 */
 	public Future<Collection<Square>> prepareAsync() {

@@ -18,6 +18,8 @@
 		animatedContainer:flipSpeed="fast"
 		animatedContainer:animateBitmapChange="true"
 		animatedContainer:maxDelayValueInMillis="1000"
+		animatedContainer:drawableFront="@drawable/"
+		animatedContainer:drawableBack="@drawable/"
 		animatedContainer:squaresCountHorizontal="4" />
 
 	<LinearLayout
