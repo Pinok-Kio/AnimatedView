@@ -1,5 +1,5 @@
 ### Simple view with change image animation.
-![](https://github.com/StudentNSK/AnimatedView/raw/master/screen.gif)
+![](https://github.com/StudentNSK/AnimatedView/raw/master/screenshot/screen.gif)
 
 ### Usage
     <com.serega.animatedview.AnimatedContainer
