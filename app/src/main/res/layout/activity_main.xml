@@ -18,9 +18,9 @@
 		animatedContainer:flipSpeed="fast"
 		animatedContainer:animateBitmapChange="true"
 		animatedContainer:maxDelayValueInMillis="1000"
-		animatedContainer:drawableFront="@drawable/"
-		animatedContainer:drawableBack="@drawable/"
-		animatedContainer:squaresCountHorizontal="4" />
+		animatedContainer:squaresCountHorizontal="4"
+		animatedContainer:showSmallProgressBar="true"
+		animatedContainer:drawableFront="@mipmap/image_marilyn_front"/>
 
 	<LinearLayout
 		android:layout_width="match_parent"

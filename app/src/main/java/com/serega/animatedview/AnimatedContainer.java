@@ -10,12 +10,15 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 public class AnimatedContainer extends FrameLayout implements AnimatedView.PrepareProgressCallback {
 	private FrameLayout progress;
+	private ProgressBar smallProgress;
 	private Handler handler;
 	private AnimatedView animatedView;
 	public static final int DEFAULT_SIZE_DP = 150;
+	private boolean firstStart = true;
 
 	public AnimatedContainer(Context context) {
 		super(context);
@@ -59,6 +62,7 @@ public class AnimatedContainer extends FrameLayout implements AnimatedView.Prepa
 		handler = new Handler(Looper.getMainLooper());
 		View view = LayoutInflater.from(context).inflate(R.layout.animated_view_layout, this, true);
 		progress = (FrameLayout) view.findViewById(R.id.progress_bar);
+		smallProgress = (ProgressBar) view.findViewById(R.id.progress_small);
 		animatedView = (AnimatedView) view.findViewById(R.id.animatedView);
 		animatedView.setPrepareCallback(this);
 		animatedView.init(context, attrs, defStyleAttr, defStyleRes);
@@ -72,21 +76,40 @@ public class AnimatedContainer extends FrameLayout implements AnimatedView.Prepa
 
 	@Override
 	public void onPrepareStart() {
-		if (progress != null) {
-			progress.setVisibility(VISIBLE);
-		}
+		setProgress(View.VISIBLE);
 	}
 
 	@Override
 	public void onPrepareFinish() {
-		handler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (progress != null) {
-					progress.setVisibility(GONE);
-				}
+		setProgress(View.GONE);
+	}
+
+	private void setProgress(final int visibility){
+		if(Looper.getMainLooper().getThread().equals(Thread.currentThread())){
+			if (smallProgress != null) {
+				smallProgress.setVisibility(visibility);
+				hideBigProgress(visibility);
 			}
-		});
+		}else {
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					if (smallProgress != null) {
+						smallProgress.setVisibility(visibility);
+						hideBigProgress(visibility);
+					}
+				}
+			});
+		}
+	}
+
+	private void hideBigProgress(int visibility){
+		if(firstStart){
+			if(progress != null && progress.getVisibility() == View.VISIBLE && visibility == View.GONE){
+				progress.setVisibility(GONE);
+				firstStart = false;
+			}
+		}
 	}
 
 	public void nextBitmap(int bitmapId){

@@ -14,5 +14,6 @@
 		<attr name="drawableFront" format="reference" />
 		<attr name="drawableBack" format="reference" />
 		<attr name="animateBitmapChange" format="boolean" />
+		<attr name="showSmallProgressBar" format="boolean" />
 	</declare-styleable>
 </resources>

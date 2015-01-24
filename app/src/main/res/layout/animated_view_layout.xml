@@ -19,6 +19,15 @@
 			style="?android:attr/progressBarStyleLarge"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center"/>
+			android:layout_gravity="center" />
 	</FrameLayout>
+
+	<ProgressBar
+		style="?android:attr/progressBarStyleSmallInverse"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/progress_small"
+		android:layout_margin="8dp"
+		android:layout_gravity="bottom|right" />
+
 </FrameLayout>

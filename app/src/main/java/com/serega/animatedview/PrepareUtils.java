@@ -266,7 +266,7 @@ class PrepareUtils {
 	}
 
 	private void checkWidth() {
-		if (width == -1) {
+		if (width == EMPTY_VALUE) {
 			width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, Constants.DEFAULT_SIZE_DP, context.getResources().getDisplayMetrics());
 		}
 	}

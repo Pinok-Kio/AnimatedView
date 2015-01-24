@@ -27,6 +27,7 @@ class AnimatedView extends SurfaceView implements SurfaceHolder.Callback {
 	private int bitmapFront = EMPTY_VALUE;
 	private int bitmapBack = EMPTY_VALUE;
 	private boolean needAnimation = true;
+	private boolean showProgressBar = true;
 	private Future<Collection<Square>> futurePrepare;
 	private PrepareProgressCallback prepareCallback;
 	private PrepareUtils utils;
@@ -178,9 +179,7 @@ class AnimatedView extends SurfaceView implements SurfaceHolder.Callback {
 				e.printStackTrace();
 			}
 
-			if (prepareCallback != null) {
-				prepareCallback.onPrepareFinish();
-			}
+			hideProgressBar();
 
 			SurfaceHolder holder = getHolder();
 
@@ -190,6 +189,7 @@ class AnimatedView extends SurfaceView implements SurfaceHolder.Callback {
 						squareList = futurePrepare.get();
 						needUpdateList = false;
 						rotate();
+						hideProgressBar();
 					} catch (InterruptedException | ExecutionException e) {
 						e.printStackTrace();
 					}
@@ -234,7 +234,7 @@ class AnimatedView extends SurfaceView implements SurfaceHolder.Callback {
 				futurePrepare = utils.prepareAsync();
 				break;
 		}
-
+		showProgressBar();
 		drawThread.needUpdateList(true);
 	}
 
@@ -253,8 +253,20 @@ class AnimatedView extends SurfaceView implements SurfaceHolder.Callback {
 				futurePrepare = utils.prepareAsync();
 				break;
 		}
-
+		showProgressBar();
 		drawThread.needUpdateList(true);
+	}
+
+	private void showProgressBar(){
+		if (showProgressBar && prepareCallback != null) {
+			prepareCallback.onPrepareStart();
+		}
+	}
+
+	private void hideProgressBar(){
+		if (showProgressBar && prepareCallback != null) {
+			prepareCallback.onPrepareFinish();
+		}
 	}
 
 	void clear(){
