@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<declare-styleable name="AnimatedContainer">
+		<attr name="squaresCountHorizontal" format="integer" />
+		<attr name="marginBetweenSquares" format="dimension" />
+
+		<attr name="flipSpeed" format="enum">
+			<enum name="fast" value="18" />
+			<enum name="normal" value="6" />
+			<enum name="slow" value="2" />
+		</attr>
+		<attr name="backgroundColor" format="color" />
+		<attr name="maxDelayValueInMillis" format="integer" />
+		<attr name="drawableFront" format="reference" />
+		<attr name="drawableBack" format="reference" />
+		<attr name="animateBitmapChange" format="boolean" />
+	</declare-styleable>
+</resources>
