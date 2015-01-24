@@ -85,6 +85,7 @@ class AnimatedView extends SurfaceView implements SurfaceHolder.Callback {
 			bitmapFront = a.getResourceId(R.styleable.AnimatedContainer_drawableFront, EMPTY_VALUE);
 			bitmapBack = a.getResourceId(R.styleable.AnimatedContainer_drawableBack, EMPTY_VALUE);
 			needAnimation = a.getBoolean(R.styleable.AnimatedContainer_animateBitmapChange, true);
+			showProgressBar = a.getBoolean(R.styleable.AnimatedContainer_showSmallProgressBar, true);
 			a.recycle();
 		}
 	}
@@ -95,9 +96,7 @@ class AnimatedView extends SurfaceView implements SurfaceHolder.Callback {
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		if (prepareCallback != null) {
-			prepareCallback.onPrepareStart();
-		}
+		showProgressBar();
 		utils = new PrepareUtils(getContext());
 		utils.setViewWidth(getWidth())
 				.setFrontBitmap(bitmapFront)

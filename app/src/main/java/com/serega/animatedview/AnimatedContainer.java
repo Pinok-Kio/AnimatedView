@@ -76,6 +76,11 @@ public class AnimatedContainer extends FrameLayout implements AnimatedView.Prepa
 
 	@Override
 	public void onPrepareStart() {
+		if(firstStart){
+			if(progress != null){
+				progress.setVisibility(VISIBLE);
+			}
+		}
 		setProgress(View.VISIBLE);
 	}
 
