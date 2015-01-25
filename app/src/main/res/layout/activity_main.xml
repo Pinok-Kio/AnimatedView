@@ -20,6 +20,7 @@
 		animatedContainer:maxDelayValueInMillis="1000"
 		animatedContainer:squaresCountHorizontal="4"
 		animatedContainer:showSmallProgressBar="true"
+		animatedContainer:marginBetweenSquares="2dp"
 		animatedContainer:drawableFront="@mipmap/image_marilyn_front"/>
 
 	<LinearLayout
