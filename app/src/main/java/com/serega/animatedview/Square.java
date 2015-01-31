@@ -41,6 +41,9 @@ class Square {
 	private Bitmap bitmapBack;
 	private Bitmap currentBitmap;
 
+	private final Rect bitmapSrc = new Rect();
+	private final RectF bitmapDst = new RectF();
+
 	private boolean isInProgress;
 	private boolean useAnimation = true;
 	private State currentState = State.FRONT;
@@ -95,12 +98,13 @@ class Square {
 	void draw(Canvas canvas) {
 		if (!isInProgress || System.currentTimeMillis() < startDelay) {
 			if (currentBitmap != null) {
-				canvas.drawBitmap(currentBitmap, null, rectMain, paint);
+				canvas.drawBitmap(currentBitmap, bitmapSrc, rectMain, paint);
 			} else {
 				canvas.drawRect(rectMain, paint);
 			}
 			return;
 		}
+
 		drawWithRotate(canvas);
 	}
 
@@ -120,7 +124,7 @@ class Square {
 		}
 
 		if (currentBitmap != null) {
-			canvas.drawBitmap(currentBitmap, null, rectMain, paint);
+			canvas.drawBitmap(currentBitmap, bitmapSrc, rectMain, paint);
 		} else {
 			canvas.drawRect(rectMain, paint);
 		}
@@ -200,5 +204,13 @@ class Square {
 
 	State getCurrentState() {
 		return currentState;
+	}
+
+	void setBitmapSrc(int left, int top, int right, int bottom){
+		bitmapSrc.set(left, top, right, bottom);
+	}
+
+	void serBitmapDst(float left, float top, float right, float bottom){
+		bitmapDst.set(left, top, right, bottom);
 	}
 }

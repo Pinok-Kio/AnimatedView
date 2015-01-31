@@ -7,7 +7,7 @@ import android.util.LruCache;
 import java.util.List;
 
 public class Cache {
-	private final LruCache<Integer, List<Bitmap>> cache;
+	private final LruCache<Integer, Bitmap> cache;
 	private static Cache instance;
 
 	private Cache(){
@@ -22,12 +22,12 @@ public class Cache {
 		return instance;
 	}
 
-	public void put(int key, List<Bitmap> regions){
-		cache.put(key, regions);
+	public void put(int key, Bitmap bitmap){
+		cache.put(key, bitmap);
 	}
 
 	@Nullable
-	public List<Bitmap> get(int key){
+	public Bitmap get(int key){
 		return cache.get(key);
 	}
 }

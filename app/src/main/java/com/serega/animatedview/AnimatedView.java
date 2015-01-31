@@ -167,7 +167,7 @@ class AnimatedView extends SurfaceView implements SurfaceHolder.Callback {
 			super.run();
 			while (!futurePrepare.isDone()) {
 				try {
-					Thread.sleep(100);
+					Thread.sleep(50);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

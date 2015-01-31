@@ -18,7 +18,7 @@
 		animatedContainer:flipSpeed="fast"
 		animatedContainer:animateBitmapChange="true"
 		animatedContainer:maxDelayValueInMillis="1000"
-		animatedContainer:squaresCountHorizontal="4"
+		animatedContainer:squaresCountHorizontal="5"
 		animatedContainer:showSmallProgressBar="true"
 		animatedContainer:marginBetweenSquares="2dp"
 		animatedContainer:drawableFront="@mipmap/image_marilyn_front"/>

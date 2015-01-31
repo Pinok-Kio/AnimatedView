@@ -1,19 +1,14 @@
 package com.serega.animatedview;
 
-import android.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapRegionDecoder;
-import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.util.TypedValue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -73,8 +68,6 @@ class PrepareUtils {
 	 */
 	private boolean animateChanges = true;
 
-	private boolean computeCurrentBitmap;
-	private boolean computeNextBitmap;
 	private final Context context;
 
 	PrepareUtils(Context context) {
@@ -187,12 +180,6 @@ class PrepareUtils {
 		return this;
 	}
 
-	PrepareUtils computeBitmaps(boolean current, boolean next) {
-		computeCurrentBitmap = current;
-		computeNextBitmap = next;
-		return this;
-	}
-
 	/**
 	 * Is rotate animation required?
 	 *
@@ -205,7 +192,7 @@ class PrepareUtils {
 	}
 
 	/**
-	 * Prepare Squared (dividing bitmaps, set initial values). Take some time, should run outside main thread.
+	 * Prepare Squares (dividing bitmaps, set initial values). Take some time, should run outside main thread.
 	 *
 	 * @return collection of Squares to use
 	 * @throws IOException if the image format is not supported or can not be decoded.
@@ -219,24 +206,20 @@ class PrepareUtils {
 		int imax = squaresHorizontal * squaresHorizontal;
 		Collection<Square> squareList = new ArrayList<>(imax);
 
-		List<Bitmap> frontBitmaps = getBitmap(bitmapFrontId, bitmapFront);
-		BitmapRegionDecoder decoderFront = makeDecoder(frontBitmaps);
-
-		List<Bitmap> toCacheFront = null;
-		if (decoderFront == null) {
-			colorFront = context.getResources().getColor(R.color.holo_red_dark);
-		}else{
-			toCacheFront = new ArrayList<>(imax);
+		Bitmap frontBitmap = getBitmap(bitmapFrontId, bitmapFront);
+		if (frontBitmap == null) {
+			colorFront = context.getResources().getColor(android.R.color.holo_red_dark);
+		} else {
+			int frontKey = (bitmapFront != null) ? bitmapFront.hashCode() : bitmapFrontId;
+			Cache.getInstance().put(frontKey, frontBitmap);
 		}
 
-		List<Bitmap> backBitmaps = getBitmap(bitmapBackId, bitmapBack);
-		BitmapRegionDecoder decoderBack = makeDecoder(backBitmaps);
-
-		List<Bitmap> toCacheBack = null;
-		if (decoderBack == null) {
-			colorBack = context.getResources().getColor(R.color.holo_green_dark);
-		}else{
-			toCacheBack = new ArrayList<>(imax);
+		Bitmap backBitmap = getBitmap(bitmapBackId, bitmapBack);
+		if (backBitmap == null) {
+			colorBack = context.getResources().getColor(android.R.color.holo_green_dark);
+		} else {
+			int backKey = (bitmapBack != null) ? bitmapBack.hashCode() : bitmapBackId;
+			Cache.getInstance().put(backKey, backBitmap);
 		}
 
 		for (int i = 0, j = 0, k = 0; i < imax; i++) {
@@ -245,11 +228,18 @@ class PrepareUtils {
 
 			Square s = new Square(startX, startY, squaresAreaDimen - marginBetween, squaresAreaDimen - marginBetween);
 
-			Rect bitmapRegion = new Rect(startX - marginBetween, startY - marginBetween,
-					startX + s.getWidth(), startY + s.getHeight());
+			s.setBitmapSrc(startX - marginBetween, startY - marginBetween, startX + s.getWidth(), startY + s.getHeight());
+			if (frontBitmap != null) {
+				s.setFrontBitmap(frontBitmap);
+			} else {
+				s.setFrontColor(colorFront);
+			}
 
-			setSquareBitmaps(s, decoderFront, decoderBack, bitmapRegion, frontBitmaps, backBitmaps,
-					toCacheFront, toCacheBack, colorFront, colorBack, i);
+			if (backBitmap != null) {
+				s.setBackBitmap(backBitmap);
+			} else {
+				s.setBackColor(colorBack);
+			}
 
 			s.setStep(flipSpeed);
 			if (maxDelayValue != EMPTY_VALUE) {
@@ -265,15 +255,6 @@ class PrepareUtils {
 			}
 		}
 
-		if (toCacheFront != null) {
-			int frontKey = (bitmapFront != null) ? bitmapFront.hashCode() : bitmapFrontId;
-			Cache.getInstance().put(frontKey, toCacheFront);
-		}
-		if (toCacheBack != null) {
-			int backKey = (bitmapBack != null) ? bitmapBack.hashCode() : bitmapBackId;
-			Cache.getInstance().put(backKey, toCacheBack);
-		}
-
 		return squareList;
 	}
 
@@ -283,59 +264,31 @@ class PrepareUtils {
 		}
 	}
 
-	private static void setSquareBitmaps(Square s, BitmapRegionDecoder decoderFront, BitmapRegionDecoder decoderBack, Rect bitmapRegion,
-	                                     List<Bitmap> frontBitmaps, List<Bitmap> backBitmaps, Collection<Bitmap> toCacheFront, Collection<Bitmap> toCacheBack,
-	                                     int colorFront, int colorBack, int index){
-		if (decoderFront != null) {
-			Bitmap squareFrontBitmap = decoderFront.decodeRegion(bitmapRegion, null);
-			s.setFrontBitmap(squareFrontBitmap);
-			toCacheFront.add(squareFrontBitmap);
-		} else if (frontBitmaps != null) {
-			s.setFrontBitmap(frontBitmaps.get(index));
-		} else {
-			s.setFrontColor(colorFront);
-		}
-
-		if (decoderBack != null) {
-			Bitmap squareBackBitmap = decoderBack.decodeRegion(bitmapRegion, null);
-			s.setBackBitmap(squareBackBitmap);
-			toCacheBack.add(squareBackBitmap);
-		} else if (backBitmaps != null) {
-			s.setBackBitmap(backBitmaps.get(index));
-		} else {
-			s.setBackColor(colorBack);
-		}
-	}
-
 	@Nullable
-	private List<Bitmap> getBitmap(int bitmapId, Bitmap bitmap) {
-		List<Bitmap> result = getFromCache(bitmapId, bitmap);
+	private Bitmap getBitmap(int bitmapId, Bitmap bitmap) {
+		Bitmap result = getFromCache(bitmapId, bitmap);
 
-		if(result != null){
+		if (result != null) {
 			return result;
 		}
 
 		if (bitmapId != EMPTY_VALUE) {
-			result = new ArrayList<>(1);
-			result.add(bitmapFromResources(bitmapId));
-			return result;
+			return bitmapFromResources(bitmapId);
 		}
 
-		if(bitmap != null) {
-			result = new ArrayList<>(1);
-			result.add(scaleBitmap(bitmap, width));
-			return result;
+		if (bitmap != null) {
+			return scaleBitmap(bitmap, width);
 		}
 
 		return null;
 	}
 
 	@Nullable
-	private static List<Bitmap> getFromCache(int bitmapId, Bitmap bitmap) {
+	private static Bitmap getFromCache(int bitmapId, Bitmap bitmap) {
 		if (bitmapId != EMPTY_VALUE) {
 			return Cache.getInstance().get(bitmapId);
 		}
-		if(bitmap != null) {
+		if (bitmap != null) {
 			return Cache.getInstance().get(bitmap.hashCode());
 		}
 		return null;
@@ -350,25 +303,8 @@ class PrepareUtils {
 		return null;
 	}
 
-	@Nullable
-	private static BitmapRegionDecoder makeDecoder(List<Bitmap> bitmaps) throws IOException {
-		if(bitmaps != null && bitmaps.size() == 1){
-			Bitmap bitmap = bitmaps.get(0);
-			byte[] array = bitmapToByteArray(bitmap);
-			bitmap.recycle();
-			return BitmapRegionDecoder.newInstance(array, 0, array.length, true);
-		}
-		return null;
-	}
-
 	private static Bitmap scaleBitmap(Bitmap bitmap, int width) {
 		return Bitmap.createScaledBitmap(bitmap, width, width, false);
-	}
-
-	private static byte[] bitmapToByteArray(Bitmap bitmap) {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-		return out.toByteArray();
 	}
 
 	/**
